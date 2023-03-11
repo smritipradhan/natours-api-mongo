@@ -1,22 +1,18 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const app = require('./app');
+dotenv.config({ path: './config.env' });
 
 const DB = process.env.DATABASE;
 
-dotenv.config({ path: './config.env' });
-console.log(DB);
 mongoose
-  .connect(
-    'mongodb+srv://smritipradhan:smriti@cluster0.zeoz99e.mongodb.net/natours-test?retryWrites=true&w=majority',
-    {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useFindAndModify: true,
-      useUnifiedTopology: true
-    }
-  )
-  .then(con => {
+  .connect(DB, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: true,
+    useUnifiedTopology: true
+  })
+  .then(() => {
     console.log('Hey');
   });
 const port = process.env.PORT || 3000;
