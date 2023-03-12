@@ -285,3 +285,5 @@ POSTMAN Body
 
 If we try again with the same Data ,it will show error.
 If we miss the required field , it will show error.
+<img width="1440" alt="Screenshot 2023-03-12 at 11 38 22 PM" src="https://user-images.githubusercontent.com/47382260/224563869-1eec138c-6566-4150-9455-6d19a1d9253c.png">
+
