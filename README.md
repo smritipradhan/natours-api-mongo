@@ -186,3 +186,102 @@ In this project we are going to use a widely used Architecture called as MVC Arc
 Model Layer concerned with everything about the Applications Data and the Business Logic.
 Controller Layer - Handle Applications request,interact with Models,and send send back responses to the Client.(Application Logic).
 View Layer - Graphical Interface of our app. In other words if we are building a server side rendered websites. In this case, the view layer consists basically of templates used to generate the View,so the website that we are going to send back to the client.
+
+In our Request Response Cycle , Request will hit one of our Routers, we have multiple Routers - tours , users etc.Now the goal of the Router is to delegate the request to the correct handler functions,which will be in one of our controllers for each of our Resources.Then depending on the incoming Request the controller might need to interact with one of the models , for example to retrieve a certain document from the Database or to create a new one.After getting the data from the Model, the controller might be ready to send back a response to the client for example containing the Data.
+
+Now in case we want to actually render a Website , after getting the Data from the Model, the controller will select one of the View Template and inject Data into it.That rendered website will then be send back as the response.In the View layer of the Express app there is one view template for each page.
+
+### Application Vs Bussiness Logic
+
+Application Logic (Controller) -
+
+- Code that is concerned about the applications implementaion,not the underlying business problem we are trying to solve (eg showing and selling tours).
+- Concerned about managing requests and responses
+- About the Apps technical Aspects
+- Bridge between model and View Layers
+
+Business Logic (Model) -
+
+- Code that actually solves the businness problem we set to solve
+  -Directly related to business rules,how the business works and business needs.
+  Example - Creating new tours , checkoing if users password is correct , Validating User Inputs Data, Ensuring only Users who bouhgt a tour can review it.
+
+---
+
+## Refactoring for MVC
+
+We already created controller and routes now we will create models.
+
+----model
+-tourModel.js
+-userModel.js
+
+tourModel.js
+
+```
+const mongoose = require('mongoose');
+
+const tourSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'A tour must have a name'], //This field is required .These object are Schema type options
+    unique: true
+  },
+  rating: {
+    type: Number,
+    default: 4.5 //If we forget to define then the default value will be 4.5
+  },
+  price: {
+    type: Number,
+    required: [true, 'A tour must have a price']
+  }
+});
+
+const Tour = mongoose.model('Tour', tourSchema);
+
+module.exports = Tour;
+```
+
+All our Schema and model is in the tourModel.js file.
+So, now where do we actually need this tour?Where are we actually going to create , query ,delete and update tours.We are going to do that in the tourController.
+
+## Another Way of Creating Documents
+
+We are going to handle the createTour function (POST request)
+
+```
+//POST Request will be handled here
+exports.createTour = async (req, res) => {
+  try {
+    //  const newTour = new Tour({});
+    //  newTour.save();
+    const newTour = await Tour.create(req.body); //Data which came
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tour: newTour
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'failure',
+      message: err //We can change this and understand Error Handling in a better way
+    });
+  }
+};
+```
+
+POSTMAN Body
+
+```
+{
+  "name": "Varkala",
+  "duration":10 ,
+  "difficulty":"medium",
+  "price":900,
+  "rating":5
+}
+```
+
+If we try again with the same Data ,it will show error.
+If we miss the required field , it will show error.
