@@ -245,7 +245,7 @@ module.exports = Tour;
 All our Schema and model is in the tourModel.js file.
 So, now where do we actually need this tour?Where are we actually going to create , query ,delete and update tours.We are going to do that in the tourController.
 
-## Another Way of Creating Documents
+## Another Way of CREATING DOCUMENT (POST)
 
 We are going to handle the createTour function (POST request)
 
@@ -287,3 +287,147 @@ If we try again with the same Data ,it will show error.
 If we miss the required field , it will show error.
 <img width="1440" alt="Screenshot 2023-03-12 at 11 38 22 PM" src="https://user-images.githubusercontent.com/47382260/224563869-1eec138c-6566-4150-9455-6d19a1d9253c.png">
 
+## READING DOCUMENTS (GET all tours)
+
+```
+exports.getAllTours = async (req, res) => {
+  try {
+    const tours = await Tour.find();
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tours
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+```
+
+Tour.find(); will give us all the tour information in a desired format.
+OUTPUT IN POSTMAN
+
+```
+{
+   "status": "success",
+   "data": {
+       "tours": [
+           {
+               "rating": 4.7,
+               "_id": "640de148702043362c054126",
+               "name": "The Forest Hiker",
+               "price": 497,
+               "__v": 0
+           },
+           {
+               "rating": 4.5,
+               "_id": "640de1d856cac636a96fd81d",
+               "name": "The Park Camper",
+               "price": 997,
+               "__v": 0
+           },
+           {
+               "rating": 5,
+               "_id": "640e130a5dda1542b5f77a3e",
+               "name": "Varkala",
+               "price": 900,
+               "__v": 0
+           }
+       ]
+   }
+}
+```
+
+## READING DOCUMENTS (GET tour by ID)
+
+Get Call on 127.0.0.1:3000/api/v1/tours/640de148702043362c054126
+getting the id using req.params.id
+
+```
+exports.getTour = async (req, res) => {
+  try {
+    const tour = await Tour.findById(req.params.id); //id here because in routes we named it as /:id
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour
+      }
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'failure',
+      message: err
+    });
+  }
+};
+```
+
+OUTPUT IN POSTMAN
+
+```
+{
+    "status": "success",
+    "data": {
+        "tour": {
+            "rating": 4.7,
+            "_id": "640de148702043362c054126",
+            "name": "The Forest Hiker",
+            "price": 497,
+            "__v": 0
+        }
+    }
+}
+```
+
+## UPDATING DOCUMENTS (PATCH)
+
+```
+exports.updateTour = async (req, res) => {
+  try {
+    const newTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tour: newTour
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'failure',
+      message: 'Invalid Entry'
+    });
+  }
+};
+```
+
+Raw json
+
+```
+{
+    "price":500
+}
+```
+
+OUTPUT In postman
+
+```
+{
+    "status": "success",
+    "data": {
+        "tour": {
+            "rating": 5,
+            "_id": "640e130a5dda1542b5f77a3e",
+            "name": "Varkala",
+            "price": 500,
+            "__v": 0
+        }
+    }
+}
+```
+
+The output is with the updated price Data
