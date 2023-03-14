@@ -430,4 +430,37 @@ OUTPUT In postman
 }
 ```
 
-The output is with the updated price Data
+The output is with the updated - price - 500
+
+## DELETING DOCUMENTS (DELETE)
+
+```
+
+exports.deleteTour = async (req, res) => {
+  try {
+    await Tour.findByIdAndDelete(req.params.id, {});
+
+    res.status(204).json({
+      status: 'success',
+      data: null
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'failure',
+      message: 'Invalid Entry'
+    });
+  }
+};
+
+```
+
+No output in Postman
+
+---
+
+GET - 200
+PATCH - 200
+DELETE - 204
+CREATE - 201
+
+---
